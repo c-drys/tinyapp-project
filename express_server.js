@@ -44,32 +44,53 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-app.get('/u/:shortURL', (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
-});
-
-// add delete route re-direct
-app.post('/urls/:shortURL/delete', (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect('/urls');
-});
-
-app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
-});
-
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`);         
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>Chris</b></body></html>\n");
+app.get('/urls:shortURL', (req, res) => {
+  let templateVars = {
+    shortURL: req.params.shortURL,
+    long: urlDatabase[req.params.shortURL]
+  };
+  res.render('urls_show', templateVars)
+
+app.get('/u/:shortURL', (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+});
+
+//add POST edit route redirect ??
+app.post("/urls/:shortURL/edit", (req, res) => {
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  res.render("urls_show", templateVars);
+});
+
+// add POST delete route re-direct
+app.post('/urls/:shortURL/delete', (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  res.redirect('/urls');
+});
+
+app.post('/urls/:shortURL', (req, res) => {
+  let shortURL = req.params.shortURL;
+  let longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
+  res.redirect('/urls');
 });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+// app.post("/urls", (req, res) => {
+  //   console.log(req.body);  // Log the POST request body to the console
+  //   res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  // });
+  
+  
+  // app.get("/hello", (req, res) => {
+  //   res.send("<html><body>Hello <b>Chris</b></body></html>\n");
+  // });
