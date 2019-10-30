@@ -13,18 +13,23 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-// add index_ejs route template
+// add GET index_ejs template route
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
-// access to json 
+// add GET index_new template route
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
+// add GET access to json 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-// lookup long url from the urlDatabase
+// add GET lookup long url from the urlDatabase
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };/* What goes here? */ 
   res.render('urls_show', templateVars);
