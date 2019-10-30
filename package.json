@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/drystar/tinyapp-project/issues"
   },
-  "homepage": "https://github.com/drystar/tinyapp-project#readme"
+  "homepage": "https://github.com/drystar/tinyapp-project#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
