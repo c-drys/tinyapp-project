@@ -13,6 +13,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+// implement to alwasy return 6 characters
 function generateRandomString() {
   let str = '';
   let alphanum = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -23,9 +24,9 @@ function generateRandomString() {
   return str;
 }
 
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
+// app.get("/", (req, res) => {
+//   res.send("Hello!");
+// });
 
 // add GET index_ejs template route
 app.get("/urls", (req, res) => {
@@ -41,13 +42,6 @@ app.get("/urls.json", (req, res) => {
 // add GET index_new template route
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
-});
-
-
-// add GET lookup long url from the urlDatabase
-app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };/* What goes here? */ 
-  res.render('urls_show', templateVars);
 });
 
 app.get('/u/:shortURL', (req, res) => {
