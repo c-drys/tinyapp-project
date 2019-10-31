@@ -15,27 +15,16 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+app.get('/login', (req, res) => {
+    res.render('login');
+})
+
 // add POST username for username cookie
 app.post('/login', (req, res) => {
   res.cookie("username", req.body.username);
   // console.log("username", req.body.username)
   res.redirect('/urls');
 });
-
-// app.post('/login', (req, res) => {
-//   const { email } = req.body;
-//   for (const userId in users) {
-//     const user = users[userId];
-//     if (user.email === email) {
-//         // log the user in (return) res.send
-//         // res.cookie('userId', userId);
-//         req.session.userId = userId;
-//         res.redirect('/');
-//     }
-//     // email does not exist res.send
-//   }
-//   // final response
-// });
 
 const users = { 
   "userRandomID": {
@@ -47,6 +36,17 @@ const users = {
     id: "user2RandomID", 
     email: "user2@example.com", 
     password: "password202"
+  }
+}
+
+// AlreadyRegistered
+for(let key in users) {
+  let existingEmail = users[key].email
+  if (("!email") || ("!password")) {
+    return false;
+    res. 
+  } else if (email === existingEmail) {
+    res.sendStatus(400);
   }
 }
 
@@ -66,9 +66,6 @@ app.post('/register', (req, res) => {
   res.redirect(`/urls`);
   }
 });
-
-//const AlreadyRegistered
-
 
 // add POST logout & clear cookie 
 app.post('/logout', (req, res) => {
@@ -91,7 +88,7 @@ function generateRandomString() {
 // add GET index_ejs template route
 app.get("/urls", (req, res) => {
   let templateVars = { 
-    username: req.cookies["username"],
+    username: req.cookies["user_id"],
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
