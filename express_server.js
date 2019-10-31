@@ -37,7 +37,31 @@ app.post('/login', (req, res) => {
 //   // final response
 // });
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "password101"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "password202"
+  }
+}
+
+// add render to register
+app.get('/register', (req, res) => {
+  let templateVars = {
+    username: req.cookies["username"]
+  };
+  res.render('urls_registration', templateVars);
+});
+
+
+// add POST logout & clear cookie 
 app.post('/logout', (req, res) => {
+  console.log(req.body);
   res.clearCookie("username", req.body.username);
   res.redirect('/urls');
 });
@@ -82,19 +106,6 @@ app.get("/urls/new", (req, res) => {
 app.get("/register", (req, res) => {
   res.render("register");
 });
-
-const users = { 
-  "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
-  }
-}
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
