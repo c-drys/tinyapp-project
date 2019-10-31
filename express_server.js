@@ -3,7 +3,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const PORT = 5000; // default port 8080
 
-
+app.use(cookieParser());
 app.set("view engine", "ejs");
 
 // convert the request body from a buffer to a readable string
@@ -18,7 +18,7 @@ const urlDatabase = {
 // add POST username for username cookie
 app.post('/login', (req, res) => {
   res.cookie("username", req.body.username);
-  console.log("username", req.body.username)
+  // console.log("username", req.body.username)
   res.redirect('/urls');
 });
 
@@ -38,7 +38,7 @@ app.post('/login', (req, res) => {
 // });
 
 app.post('/logout', (req, res) => {
-  res.clearcookie("username", req.body.username);
+  res.clearCookie("username", req.body.username);
   res.redirect('/urls');
 });
 
@@ -56,7 +56,7 @@ function generateRandomString() {
 // add GET index_ejs template route
 app.get("/urls", (req, res) => {
   let templateVars = { 
-    username: `"req.cookies"["username"]`,
+    username: req.cookies["username"],
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
