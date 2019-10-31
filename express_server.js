@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const PORT = 5000; // default port 8080
 
 
@@ -15,6 +15,33 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+// add POST username for username cookie
+app.post('/login', (req, res) => {
+  res.cookie("username", req.body.username);
+  console.log("username", req.body.username)
+  res.redirect('/urls');
+});
+
+// app.post('/login', (req, res) => {
+//   const { email } = req.body;
+//   for (const userId in users) {
+//     const user = users[userId];
+//     if (user.email === email) {
+//         // log the user in (return) res.send
+//         // res.cookie('userId', userId);
+//         req.session.userId = userId;
+//         res.redirect('/');
+//     }
+//     // email does not exist res.send
+//   }
+//   // final response
+// });
+
+app.post('/logout', (req, res) => {
+  res.clearcookie("username", req.body.username);
+  res.redirect('/urls');
+});
+
 // implement to always return 6 characters
 function generateRandomString() {
   let str = '';
@@ -28,18 +55,27 @@ function generateRandomString() {
 
 // add GET index_ejs template route
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { 
+    username: `"req.cookies"["username"]`,
+    urls: urlDatabase
+  };
   res.render("urls_index", templateVars);
 });
 
 // add GET access to json 
 app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+  let templateVars = {
+    username: req.cookies["username"]
+  }
+  res.json(urlDatabase, templateVars);
 });
 
 // add GET index_new template route
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {
+  username: req.cookies["username"]
+  };
+  res.render("urls_new", templateVars);
 });
 
 app.post("/urls", (req, res) => {
@@ -50,6 +86,7 @@ app.post("/urls", (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   let templateVars = {
+    username: req.cookies['username'],
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL]
   };
@@ -79,6 +116,11 @@ app.post('/urls/:shortURL', (req, res) => {
   urlDatabase[shortURL] = longURL;
   res.redirect('/urls');
 });
+
+// catach all [failsafe]
+// app.get('/' (req, res)) => {
+  // console.log('*', (req, res)
+  // res.redirect())
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
