@@ -78,6 +78,12 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+// add GET register template route
+app.get("/register", (req, res) => {
+  res.render("register");
+});
+
+
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
