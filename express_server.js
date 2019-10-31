@@ -50,14 +50,17 @@ const users = {
   }
 }
 
-// add render to register
+// add POST endpoint to register
 app.get('/register', (req, res) => {
-  let templateVars = {
-    username: req.cookies["username"]
-  };
-  res.render('urls_registration', templateVars);
+  const newUserID = generateRandomString()
+  users[newUserID] = {
+  "id": newUserID, 
+  "email": req.body.email,
+  "password": req.body.password}
+  console.log(users);
+  // inspect data object contents 
+  res.redirect(`/urls`);
 });
-
 
 // add POST logout & clear cookie 
 app.post('/logout', (req, res) => {
