@@ -53,13 +53,18 @@ const users = {
 // add POST endpoint to register
 app.get('/register', (req, res) => {
   const newUserID = generateRandomString()
+  if (req.body.email === "" || req.body.password === "") {
+    res.sendStatus(400);
+  } else {
   users[newUserID] = {
   "id": newUserID, 
   "email": req.body.email,
   "password": req.body.password}
   console.log(users);
+  res.cookie("user_id", newUserID);
   // inspect data object contents 
   res.redirect(`/urls`);
+  }
 });
 
 // add POST logout & clear cookie 
