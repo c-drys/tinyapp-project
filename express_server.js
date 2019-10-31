@@ -51,7 +51,7 @@ const users = {
 }
 
 // add POST endpoint to register
-app.get('/register', (req, res) => {
+app.post('/register', (req, res) => {
   const newUserID = generateRandomString()
   if (req.body.email === "" || req.body.password === "") {
     res.sendStatus(400);
@@ -66,6 +66,9 @@ app.get('/register', (req, res) => {
   res.redirect(`/urls`);
   }
 });
+
+//const AlreadyRegistered
+
 
 // add POST logout & clear cookie 
 app.post('/logout', (req, res) => {
