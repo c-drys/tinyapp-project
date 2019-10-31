@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+      <% include partials/_header.ejs %>
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -15,24 +16,23 @@
       crossorigin="anonymous"
     />
     <body>
-      <div class="container">
-    
-        <p>Already registered? <a href="/login">Login!</a></p>
-    
-        <form method="POST" action="/register">
-          <h3>Registration Form</h3>
-          <div class="input-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required />
-          </div>
-          <div class="input-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required />
-          </div>
-          <br />
-          <button type="submit">Register</button>
-        </form>
-    <!-- Bootstrap JS -->
+        <% include ./partials/_header.ejs %>
+        <main style='margin: 1em;'>
+      
+            <h3 class=text-muted>Register</h3>
+      
+            <form class="form-group mb-2" action="/register" method="POST">
+              <label for="email" style="margin-bottom: .2em">Email:</label>
+              <input class="form-control" type="email" name="email" placeholder="Email"
+                style="width: 300px; margin-bottom: .4em">
+              <label for="password" style="margin-bottom: .2em">Password:</label>
+              <input class="form-control" type="password" name="password" placeholder="Password"
+                style="width: 300px; margin-bottom: .2em">
+              <button type="submit" class="btn btn-pill btn-outline-success" style="margin-top: .4em">Sign Up</button>
+            </form>
+          </main>
+
+ <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
