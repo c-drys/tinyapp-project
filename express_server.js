@@ -43,6 +43,8 @@ function generateRandomString() {
 // scan object for user ID
 const findID = function(users, email) {
   for (const newUserID in users) {
+    console.log(users[newUserID].email);
+    console.log(email);
     if (users[newUserID].email === email) {
       return users[newUserID];
     }
@@ -127,8 +129,8 @@ app.post('/urls/:shortURL', (req, res) => {
 // add POST username for username cookie
 app.post('/login', (req, res) => {
   const user = findID(users, req.body.email);
-  console.log("users ID'd", users);
-  res.cookie("username", user.id);
+  console.log("users ID'd", user);
+  res.cookie("user_id", user.id);
   // console.log("username", req.body.username)
   res.redirect('/urls');
 });
@@ -167,7 +169,7 @@ app.post('/register', (req, res) => {
 // add POST logout & clear user cookie
 app.post('/logout', (req, res) => {
   console.log(req.body);
-  res.clearCookie("username", users[req.cookies["user_id"]]);
+  res.clearCookie("user_id", users[req.cookies["user_id"]]);
   res.redirect('/urls');
 });
 
