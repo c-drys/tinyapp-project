@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const urlDatabase = {
 
-  'b2xVn2': { longURL: "http://www.lighthouselabs.ca", userID: "userRandom1D" },
+  'b2xVn2': { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
   '9sm5xK': { longURL: "http://www.google.ca", userID: "userRandomID" },
   'akjbjb': { longURL: "http://shop.lululemon.com", userID: "user2RandomID" }
 };
@@ -153,16 +153,17 @@ app.get("/u/:shortURL", (req, res) => {
 let urlsForUser = function(userID) {
   let filteredURLs = {};
   for (const shortURL of Object.keys(urlDatabase)) {
-    if (urlDatabase[shortURL] ["userID" === userID]) {
+    if (urlDatabase[shortURL].userID === userID) {
       filteredURLs[shortURL] = urlDatabase[shortURL];
     }
   }
   return filteredURLs;
 };
 
-const userURL = function(shortURL) {
-  return urlDatabase[shortURL]["userID"];
-};
+// ??
+// const userURL = function(shortURL) {
+//   return urlDatabase[shortURL]["userID"];
+// };
 
 // add POST delete route re-direct
 app.post("/urls/:shortURL/delete", (req, res) => {
