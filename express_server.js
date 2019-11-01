@@ -115,8 +115,9 @@ app.get("/urls/new", (req, res) => {
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
-  res.redirect(`/urls/${shortURL}`);
+  // urlDatabase[shortURL] = req.body.longURL;
+  // res.redirect(`/urls/${shortURL}`);
+
   const user = req.cookies['user_id']
   const newURL = {};
   newURL['longURL'] = req.body.longURL;
@@ -129,7 +130,7 @@ app.post("/urls", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL].longURL !== users[req.cookies['user_id']]
   ) {
-    return res.status(403).send('NO ACCESS Forbidden from Editing this url');
+    return res.status(403).send('NO ACCESS Forbidden from Editing this URL');
   }
  
   // if (req.cookie["user_id"] === urlsForUser(shortURL)) {}
@@ -138,13 +139,13 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     user: users[req.cookies["user_id"]],
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
+    longURL: urlDatabase[req.params.shortURL].longURL
   };
   res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -165,11 +166,21 @@ const userURL = function(shortURL) {
 
 // add POST delete route re-direct
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
+  if (
+    urlDatabase[req.params.shortURL].userID !== users[req.cookies["user_id"]]
+  ) {
+    return res.redirect("/urls");
+
+  } delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
 });
 
 app.post("/urls/:shortURL", (req, res) => {
+  if (
+    urlDatabase[req.params.shortURL].userID !== users[req.cookies["user_id"]]
+  ) {
+    return res.status(403).send("NO ACCESS Forbidden from Editing this URL");
+  }
   let shortURL = req.params.shortURL;
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
