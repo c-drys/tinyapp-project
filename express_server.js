@@ -11,9 +11,10 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
-  akjbjb: "http://shop.lululemon.com"
+
+  'b2xVn2': { longURL: "http://www.lighthouselabs.ca", userID: "userRandom1D" },
+  '9sm5xK': { longURL: "http://www.google.ca", userID: "userRandomID" },
+  'akjbjb': { longURL: "http://shop.lululemon.com", userID: "user2RandomID" }
 };
 
 const users = {
@@ -88,7 +89,7 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
-//verify user on registry, redirect if unverified 
+//verify user on registry, redirect if unverified
 const registeredUser = function(email) {
   for (let user of Object.keys(users)) {
     if (email === users[user]['email']) {
@@ -149,10 +150,10 @@ app.get("/u/:shortURL", (req, res) => {
 
 // implement function that users can only see their own URLs
 let urlsForUser = function(userID) {
-  let filteredURLs = [];
-  for (const url of Object.keys(urlDatabase)) {
-    if (urlDatabase[url] ["userID" === userID]) {
-      filteredURLs[url] = urlDatabase[url];
+  let filteredURLs = {};
+  for (const shortURL of Object.keys(urlDatabase)) {
+    if (urlDatabase[shortURL] ["userID" === userID]) {
+      filteredURLs[shortURL] = urlDatabase[shortURL];
     }
   }
   return filteredURLs;
@@ -209,13 +210,13 @@ app.post("/register", (req, res) => {
   res.redirect(`/urls`);
 });
 
-// user online 
-const userLoggedIn= function(cookie) {
-for (const user of Object.keys(users))
-  if (cookie === user) {
-    return userLoggedIn; 
-  }
-}
+// // user online
+// const userLoggedIn= function(cookie) {
+//   for (const user of Object.keys(users))
+//     if (cookie === user) {
+//       return userLoggedIn;
+//     }
+// };
 
 // add POST logout & clear user cookie
 app.post("/logout", (req, res) => {
