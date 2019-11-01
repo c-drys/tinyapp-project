@@ -56,13 +56,13 @@ const findID = function(users, email) {
 
 // add GET index_ejs template route
 app.get('/urls', (req, res) => {
-  const currentUser = req.cookies['user_id'];
+  const currentUser = req.cookies["user_id"];
   if (!currentUser) {
-    res.redirect('/login');
+    res.redirect(`/login`);
   }
   const filteredURLs = urlsForUser(currentUser);
   let templateVars = { urls: filteredURLs, user: users[currentUser] };
-  res.render('urls_index', templateVars);
+  res.render(`urls_index`, templateVars);
 });
 
 // add GET register_ejs template route
@@ -70,7 +70,7 @@ app.get("/register", (req, res) => {
   let templateVars = {
     user: users[req.cookies["user_id"]]
   };
-  res.render("urls_register", templateVars);
+  res.render(`urls_register`, templateVars);
 });
 
 // add GET access to json
@@ -86,13 +86,13 @@ app.get("/login", (req, res) => {
   let templateVars = {
     user: users[req.cookies["user_id"]]
   };
-  res.render("login", templateVars);
+  res.render(`login`, templateVars);
 });
 
 //verify user on registry, redirect if unverified
 const registeredUser = function(email) {
   for (let user of Object.keys(users)) {
-    if (email === users[user]['email']) {
+    if (email === users[user]["email"]) {
       return registeredUser;
     }
   }
@@ -105,8 +105,8 @@ app.get("/urls/new", (req, res) => {
   };
   res.render("urls_new", templateVars);
 
-  if (req.cookies['user_id']) {
-    res.render('urls_new', templateVars);
+  if (req.cookies["user_id"]) {
+    res.render("urls_new", templateVars);
 
   } else {
     res.redirect(`/login`);
@@ -118,19 +118,19 @@ app.post("/urls", (req, res) => {
   // urlDatabase[shortURL] = req.body.longURL;
   // res.redirect(`/urls/${shortURL}`);
 
-  const user = req.cookies['user_id']
+  const user = req.cookies["user_id"]
   const newURL = {};
-  newURL['longURL'] = req.body.longURL;
-  newURL['userID'] = user;
+  newURL["longURL"] = req.body.longURL;
+  newURL["userID"] = user;
   urlDatabase[shortURL] = newURL;
   console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  if (urlDatabase[req.params.shortURL].longURL !== users[req.cookies['user_id']]
+  if (urlDatabase[req.params.shortURL].longURL !== users[req.cookies["user_id"]]
   ) {
-    return res.status(403).send('NO ACCESS Forbidden from Editing this URL');
+    return res.status(403).send("NO ACCESS Forbidden from Editing this URL");
   }
  
   // if (req.cookie["user_id"] === urlsForUser(shortURL)) {}
@@ -141,7 +141,7 @@ app.get("/urls/:shortURL", (req, res) => {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL
   };
-  res.render("urls_show", templateVars);
+  res.render(`urls_show`, templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -161,7 +161,7 @@ let urlsForUser = function(userID) {
 };
 
 const userURL = function(shortURL) {
-  return urlDatabase[shortURL]['userID'];
+  return urlDatabase[shortURL]["userID"];
 };
 
 // add POST delete route re-direct
@@ -172,7 +172,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     return res.redirect("/urls");
 
   } delete urlDatabase[req.params.shortURL];
-  res.redirect("/urls");
+  res.redirect(`/urls`);
 });
 
 app.post("/urls/:shortURL", (req, res) => {
@@ -184,7 +184,7 @@ app.post("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
-  res.redirect("/urls");
+  res.redirect(`/urls`);
 });
 
 // add POST username for username cookie
@@ -198,7 +198,7 @@ app.post("/login", (req, res) => {
     console.log("users ID'd", user);
     res.cookie("user_id", user.id);
     // console.log("username", req.body.username)
-    res.redirect("/urls");
+    res.redirect(`/urls`);
   }
 });
 
@@ -233,7 +233,7 @@ app.post("/register", (req, res) => {
 app.post("/logout", (req, res) => {
   //console.log(req.body);
   res.clearCookie("user_id", users[req.cookies["user_id"]]);
-  res.redirect("/login");
+  res.redirect(`/login`);
 });
 
 // // add GET register template route
