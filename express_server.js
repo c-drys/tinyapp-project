@@ -86,12 +86,25 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
+//verify on registry, redirect unverified 
+const registeredUser = function (email, ) {
+  for (let user of Object.keys(users)) {
+    if (email === users[user]['email']) {
+      return
+    }
+  }
+
 // add GET index_new template route
 app.get("/urls/new", (req, res) => {
   let templateVars = {
     user: users[req.cookies["user_id"]]
   };
   res.render("urls_new", templateVars);
+  if (req.cookies['user_id']) {
+    res.render('urls_new', templateVars);
+  } else {
+    res.redirect(`/login`);
+  }
 });
 
 app.post("/urls", (req, res) => {
@@ -162,16 +175,13 @@ app.post("/register", (req, res) => {
   res.redirect(`/urls`);
 });
 
-// // AlreadyRegistered
-// for(let key in users) {
-//   let existingEmail = users[key].email;
-//   if (("!email") || ("!password")) {
-//     return false;
-//     //res.
-//   } else if ("email" === "existingEmail") {
-//     res.sendStatus(400);
-//   }
-// }
+// Logged in 
+const userLoggedIn = function(cookie) {
+for (const user of Object.keys(users))
+  if (cookie === user) {
+    return; 
+  }
+}
 
 // add POST logout & clear user cookie
 app.post("/logout", (req, res) => {
