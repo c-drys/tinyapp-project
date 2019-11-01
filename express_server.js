@@ -54,20 +54,13 @@ const findID = function(users, email) {
 };
 
 // add GET index_ejs template route
-app.get("/urls", (req, res) => {
-  const userOnline = req.cookies["user_id"];
-  const filteredURLs = urlsForUser(userOnline);
-  let templateVars = {
-    user: users[req.cookies["user_id"]],
-    urls: urlDatabase
-  };
-  res.render("urls_index", templateVars);
-});
-
 app.get('/urls', (req, res) => {
   const currentUser = req.cookies['user_id'];
+  if (!currentUser) {
+    res.redirect('/login');
+  }
   const filteredURLs = urlsForUser(currentUser);
-  let templateVars = { urls: filteredURLs, user: users[currentUser] }; // variables sent to an EJS template need to be sent inside an object, so that we can access the data w/ a key
+  let templateVars = { urls: filteredURLs, user: users[currentUser] };
   res.render('urls_index', templateVars);
 });
 
@@ -123,13 +116,24 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`);
+  const user = req.cookies['user_id']
+  const newURL = {};
+  newURL['longURL'] = req.body.longURL;
+  newURL['userID'] = user;
+  urlDatabase[shortURL] = newURL;
+  console.log(urlDatabase);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  let userID = req.cookie["user_id"];
-  let shortURL = req.params.shortURL;
-  if (userID === urlsForUser(shortURL))
-  // true - enable 
+  if (urlDatabase[req.params.shortURL].longURL !== users[req.cookies['user_id']]
+  ) {
+    return res.status(403).send('NO ACCESS Forbidden from Editing this url');
+  }
+ 
+  // if (req.cookie["user_id"] === urlsForUser(shortURL)) {}
+  // // true - access
+
   let templateVars = {
     user: users[req.cookies["user_id"]],
     shortURL: req.params.shortURL,
@@ -138,23 +142,12 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-let userID = req.cookies['user_id'];
-let shortURL = req.params.shortURL;
-let access = false;
-if (userID === whoseUrlIsThis(shortURL)) {    // make sure the person trying to view this page is the owner of the shortURL
-  access = true;
-}
-let templateVars = { shortURL: shortURL, longURL: urlDatabase[shortURL]['longURL'], user: users[userID], access: access};
-res.render('urls_show', templateVars);
-});
-
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
 
 // implement function that users can only see their own URLs
-
 let urlsForUser = function(userID) {
   let filteredURLs = [];
   for (const url of Object.keys(urlDatabase)) {
@@ -216,19 +209,19 @@ app.post("/register", (req, res) => {
   res.redirect(`/urls`);
 });
 
-// // Logged in 
-// const userLoggedIn = function(cookie) {
-// for (const user of Object.keys(users))
-//   if (cookie === user) {
-//     return; 
-//   }
-// }
+// user online 
+const userLoggedIn= function(cookie) {
+for (const user of Object.keys(users))
+  if (cookie === user) {
+    return userLoggedIn; 
+  }
+}
 
 // add POST logout & clear user cookie
 app.post("/logout", (req, res) => {
   //console.log(req.body);
   res.clearCookie("user_id", users[req.cookies["user_id"]]);
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 // // add GET register template route
