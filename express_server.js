@@ -128,16 +128,17 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  if (urlDatabase[req.params.shortURL].longURL !== users[req.cookies["user_id"]]
-  ) {
+  const currentUser = req.cookies["user_id"];
+  if (!currentUser) {
     return res.status(403).send("NO ACCESS Forbidden from Editing this URL");
-  }
+  } else {
   let templateVars = {
     user: users[req.cookies["user_id"]],
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL
   };
   res.render(`urls_show`, templateVars);
+};
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -172,17 +173,27 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
+// add POST edit route re-direct
 app.post("/urls/:shortURL", (req, res) => {
-  if (
-    urlDatabase[req.params.shortURL].userID === users[req.cookies["user_id"]]
-  ) {
+  const currentUser = req.cookies["user_id"];
+  if (!currentUser) {
     return res.status(403).send("NO ACCESS Forbidden from Editing this URL");
-  }
-  let shortURL = req.params.shortURL;
-  let longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;
-  res.redirect(`/urls`);
+  } else {
+    urlDatabase[req.params.shortURL];
+    return res.redirect(`/urls/${shortURL}`); 
+    }
 });
+
+
+
+//   if (
+//     urlDatabase[req.params.shortURL].userID === users[req.cookies["user_id"]]
+//   ) {
+//     return res.status(403).send("NO ACCESS Forbidden from Editing this URL");
+//   }
+  
+//   res.redirect(`/urls`);
+// });
 
 // add POST username for username cookie
 app.post("/login", (req, res) => {
