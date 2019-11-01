@@ -157,11 +157,6 @@ let urlsForUser = function(userID) {
   return filteredURLs;
 };
 
-// ??
-// const userURL = function(shortURL) {
-//   return urlDatabase[shortURL]["userID"];
-// };
-
 // add POST delete route re-direct
 app.post("/urls/:shortURL/delete", (req, res) => {
   const currentUser = req.cookies["user_id"];
@@ -185,15 +180,6 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 
-
-//   if (
-//     urlDatabase[req.params.shortURL].userID === users[req.cookies["user_id"]]
-//   ) {
-//     return res.status(403).send("NO ACCESS Forbidden from Editing this URL");
-//   }
-  
-//   res.redirect(`/urls`);
-// });
 
 // add POST username for username cookie
 app.post("/login", (req, res) => {
@@ -228,14 +214,6 @@ app.post("/register", (req, res) => {
   // inspect data object contents
   res.redirect(`/urls`);
 });
-
-// // user online
-// const userLoggedIn= function(cookie) {
-//   for (const user of Object.keys(users))
-//     if (cookie === user) {
-//       return userLoggedIn;
-//     }
-// };
 
 // add POST logout & clear user cookie
 app.post("/logout", (req, res) => {
