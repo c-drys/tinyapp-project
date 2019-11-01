@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcrypt');
 const PORT = 5000; // default port 8080
 
 app.use(cookieParser());
@@ -22,6 +23,7 @@ const users = {
     id: "userRandomID",
     email: "user@example.com",
     password: "password101"
+    password: bcrypt.hashSync("password", 10)
   },
   user2RandomID: {
     id: "user2RandomID",
@@ -130,7 +132,7 @@ app.post("/urls", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const currentUser = req.cookies["user_id"];
   if (!currentUser) {
-    return res.status(403).send("NO ACCESS Forbidden from Editing this URL");
+    return res.status(403).send("NO ACCESS Forbidden to Editing this URL");
   } else {
   let templateVars = {
     user: users[req.cookies["user_id"]],
