@@ -55,11 +55,20 @@ const findID = function(users, email) {
 
 // add GET index_ejs template route
 app.get("/urls", (req, res) => {
+  const userOnline = req.cookies["user_id"];
+  const filteredURLs = urlsForUser(userOnline);
   let templateVars = {
     user: users[req.cookies["user_id"]],
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
+});
+
+app.get('/urls', (req, res) => {
+  const currentUser = req.cookies['user_id'];
+  const filteredURLs = urlsForUser(currentUser);
+  let templateVars = { urls: filteredURLs, user: users[currentUser] }; // variables sent to an EJS template need to be sent inside an object, so that we can access the data w/ a key
+  res.render('urls_index', templateVars);
 });
 
 // add GET register_ejs template route
@@ -86,13 +95,14 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
-//verify on registry, redirect unverified 
-const registeredUser = function (email, ) {
+//verify user on registry, redirect if unverified 
+const registeredUser = function(email) {
   for (let user of Object.keys(users)) {
     if (email === users[user]['email']) {
-      return
+      return registeredUser;
     }
   }
+};
 
 // add GET index_new template route
 app.get("/urls/new", (req, res) => {
@@ -100,8 +110,10 @@ app.get("/urls/new", (req, res) => {
     user: users[req.cookies["user_id"]]
   };
   res.render("urls_new", templateVars);
+
   if (req.cookies['user_id']) {
     res.render('urls_new', templateVars);
+
   } else {
     res.redirect(`/login`);
   }
@@ -114,6 +126,10 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  let userID = req.cookie["user_id"];
+  let shortURL = req.params.shortURL;
+  if (userID === urlsForUser(shortURL))
+  // true - enable 
   let templateVars = {
     user: users[req.cookies["user_id"]],
     shortURL: req.params.shortURL,
@@ -122,10 +138,36 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+let userID = req.cookies['user_id'];
+let shortURL = req.params.shortURL;
+let access = false;
+if (userID === whoseUrlIsThis(shortURL)) {    // make sure the person trying to view this page is the owner of the shortURL
+  access = true;
+}
+let templateVars = { shortURL: shortURL, longURL: urlDatabase[shortURL]['longURL'], user: users[userID], access: access};
+res.render('urls_show', templateVars);
+});
+
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
+
+// implement function that users can only see their own URLs
+
+let urlsForUser = function(userID) {
+  let filteredURLs = [];
+  for (const url of Object.keys(urlDatabase)) {
+    if (urlDatabase[url] ["userID" === userID]) {
+      filteredURLs[url] = urlDatabase[url];
+    }
+  }
+  return filteredURLs;
+};
+
+const userURL = function(shortURL) {
+  return urlDatabase[shortURL]['userID'];
+};
 
 // add POST delete route re-direct
 app.post("/urls/:shortURL/delete", (req, res) => {
@@ -149,7 +191,6 @@ app.post("/login", (req, res) => {
     res.sendStatus(403);
   } else {
     console.log("users ID'd", user);
-
     res.cookie("user_id", user.id);
     // console.log("username", req.body.username)
     res.redirect("/urls");
@@ -175,13 +216,13 @@ app.post("/register", (req, res) => {
   res.redirect(`/urls`);
 });
 
-// Logged in 
-const userLoggedIn = function(cookie) {
-for (const user of Object.keys(users))
-  if (cookie === user) {
-    return; 
-  }
-}
+// // Logged in 
+// const userLoggedIn = function(cookie) {
+// for (const user of Object.keys(users))
+//   if (cookie === user) {
+//     return; 
+//   }
+// }
 
 // add POST logout & clear user cookie
 app.post("/logout", (req, res) => {
