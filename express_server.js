@@ -22,14 +22,15 @@ const users = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    password: "password101"
-    password: bcrypt.hashSync("password", 10)
+    Password: "password101"
+    //Password: bcrypt.hashSync("password101", 10)
   },
   user2RandomID: {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "password202"
-  }
+    Password: "password202"
+    //Password: bcrypt.hashSync("password202", 10)
+    }
 };
 
 // // implement to always return 6 characters
@@ -42,18 +43,6 @@ const generateRandomString = function() {
   }
   console.log("string", str);
   return str;
-};
-
-// scan object for user ID
-const findID = function(users, email) {
-  for (const newUserID in users) {
-    // console.log(users[newUserID].email);
-    // console.log(email);
-    if (users[newUserID].email === email) {
-      return users[newUserID];
-    }
-  }
-  return false;
 };
 
 // add GET index_ejs template route
@@ -100,33 +89,43 @@ const registeredUser = function(email) {
   }
 };
 
+// scan object for user ID
+const findID = function(users, email) {
+  for (const newUserID in users) {
+    // console.log(users[newUserID].email);
+    // console.log(email);
+    if (users[newUserID].email === email) {
+      return users[newUserID];
+    }
+  }
+  return false;
+};
+
 // add GET index_new template route
 app.get("/urls/new", (req, res) => {
-  let templateVars = {
-    user: users[req.cookies["user_id"]]
-  };
-  res.render("urls_new", templateVars);
-
-  if (req.cookies["user_id"]) {
+  const user = users[req.cookies.user_id]
+  if (user) {
+    let templateVars = { user };
     res.render("urls_new", templateVars);
+  }
 
-  } else {
+  // // res.render("urls_new", templateVars);
+
+  // if (req.cookies["user_id"]) {
+ else {
     res.redirect(`/login`);
   }
 });
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
-  // urlDatabase[shortURL] = req.body.longURL;
-  // res.redirect(`/urls/${shortURL}`);
-
   const user = req.cookies["user_id"]
   const newURL = {};
   newURL["longURL"] = req.body.longURL;
   newURL["userID"] = user;
   urlDatabase[shortURL] = newURL;
-  console.log(urlDatabase);
-  res.redirect(`/urls/${shortURL}`);
+  //console.log(urlDatabase);
+  res.redirect(`/urls`);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -163,7 +162,7 @@ let urlsForUser = function(userID) {
 app.post("/urls/:shortURL/delete", (req, res) => {
   const currentUser = req.cookies["user_id"];
     if (!currentUser) {
-      res.redirect(`/login`);
+      res.redirect(`/access`);
     } else {
     delete urlDatabase[req.params.shortURL];
       return res.redirect("/urls");
@@ -173,15 +172,18 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 // add POST edit route re-direct
 app.post("/urls/:shortURL", (req, res) => {
   const currentUser = req.cookies["user_id"];
+console.log('iii', currentUser)
+
   if (!currentUser) {
     return res.status(403).send("NO ACCESS Forbidden from Editing this URL");
   } else {
-    urlDatabase[req.params.shortURL];
-    return res.redirect(`/urls/${shortURL}`); 
+    urlDatabase[req.params.shortURL].longURL = req.body.longURL
+    return res.redirect(`/urls`); 
     }
 });
 
-
+// const longURL = urlDatabase[req.params.shortURL].longURL;
+//   res.redirect(longURL);
 
 // add POST username for username cookie
 app.post("/login", (req, res) => {
@@ -201,15 +203,17 @@ app.post("/login", (req, res) => {
 // add POST register for new user
 app.post("/register", (req, res) => {
   let newUserID = generateRandomString();
+  const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+  console.log(hashedPassword);
   if (req.body.email === "" || req.body.password === "") {
     res.sendStatus(400);
   } else {
     users[newUserID] = {
       id: newUserID,
       email: req.body.email,
-      password: req.body.password
+      Password: hashedPassword
     };
-  }
+    }
   console.log(users);
   res.cookie("user_id", newUserID);
   console.log(newUserID);
