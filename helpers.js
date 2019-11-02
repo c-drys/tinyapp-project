@@ -10,29 +10,17 @@ const generateRandomString = function() {
   return str;
 };
 
-// scan object for user ID
-// const getUserByEmail = function(users, email) {
-//   for (const newUserID in users) {
-//     // console.log(users[newUserID].email);
-//     // console.log(email);
-//     if (users[newUserID].email === email) {
-//       return users[newUserID];
-//     }
-//   }
-//   return false;
-// };
-
 const getUserByEmail = function(email, database) {
   for (const user in database) {
     if (database[user].email === email) {
-      return user;
+      return database[user];
     }
   }
-  return {};
+  return false;
 };
 
 // implement function that users can only see their own URLs
-let urlsForUser = function(userID) {
+let urlsForUser = function(userID, urlDatabase) {
   let filteredURLs = {};
   for (const shortURL of Object.keys(urlDatabase)) {
     if (urlDatabase[shortURL].userID === userID) {
@@ -42,4 +30,4 @@ let urlsForUser = function(userID) {
   return filteredURLs;
 };
 
-module.exports = { generateRandomString, getUserByEmail, urlsForUser}
+module.exports = { generateRandomString, getUserByEmail, urlsForUser };
