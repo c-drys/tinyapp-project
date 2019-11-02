@@ -115,7 +115,7 @@ const registeredUser = function(email) {
 const getUserByEmail = function(email, database) {
   for (const user in database) {
     if (database[user].email === email) {
-      return user;
+      return database[user];
     }
   }
   return false;
@@ -123,7 +123,7 @@ const getUserByEmail = function(email, database) {
 
 // add GET index_new template route
 app.get("/urls/new", (req, res) => {
-  const user = users[req.session.user_id]
+  const user = getUserByEmail(users[req.session.user_id])
   if (!user) {
     return res.redirect(`/login`);
   }
@@ -211,7 +211,7 @@ console.log('iii', currentUser)
 
 // add POST username for username cookie
 app.post("/login", (req, res) => {
-  const user = getUserByEmail(users, req.body.email);
+  const user = getUserByEmail(req.body.email, users);
 if (req.body.email !== user.email) {
   return res.sendStatus(403)
 }
