@@ -123,15 +123,16 @@ const getUserByEmail = function(email, database) {
 
 // add GET index_new template route
 app.get("/urls/new", (req, res) => {
-  const user = getUserByEmail(users[req.session.user_id])
-  if (!user) {
+  const currentUser = users[req.session.user_id];
+  if (!currentUser) {
     return res.redirect(`/login`);
   }
     let templateVars = { 
-      user: users[req.session["user_id"]] 
+      user: users[req.session.user_id]
     };
     res.render("urls_new", templateVars);
   })
+
 
   // // res.render("urls_new", templateVars);
 
