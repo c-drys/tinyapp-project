@@ -201,7 +201,7 @@ console.log('iii', currentUser)
 
 // add POST username for username cookie
 app.post("/login", (req, res) => {
-  const user = findID(users, req.body.email);
+  const user = getUserByEmail(users, req.body.email);
 if (req.body.email !== user.email) {
   return res.sendStatus(403)
 }
