@@ -5,6 +5,8 @@ const app = express();
 const bcrypt = require('bcrypt');
 const PORT = 5000; // default port 8080
 
+const { generateRandomString, getUserByEmail, urlsForUser } = require('./helpers.js');
+
 app.use(cookieSession({
   name: 'session',
   keys: [/* secret keys */
@@ -44,25 +46,13 @@ const users = {
     }
 };
 
-// // implement to always return 6 characters
-const generateRandomString = function() {
-  let str = "";
-  let alphanum = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let alphanumlength = alphanum.length;
-  for (let i = 0; i < 6; i++) {
-    str += alphanum.charAt(Math.floor(Math.random() * alphanumlength));
-  }
-  console.log("string", str);
-  return str;
-};
-
 // add GET index_ejs template route
 app.get('/urls', (req, res) => {
   const currentUser = req.session.user_id;
   if (!currentUser) {
     res.redirect(`/login`);
   }
-  const filteredURLs = urlsForUser(currentUser);
+  const filteredURLs = urlsForUser(currentUser, urlDatabase);
   let templateVars = { urls: filteredURLs, user: users[currentUser] };
   res.render(`urls_index`, templateVars);
 });
@@ -111,15 +101,6 @@ const registeredUser = function(email) {
 //   }
 //   return false;
 // };
-
-const getUserByEmail = function(email, database) {
-  for (const user in database) {
-    if (database[user].email === email) {
-      return database[user];
-    }
-  }
-  return false;
-};
 
 // add GET index_new template route
 app.get("/urls/new", (req, res) => {
@@ -171,17 +152,6 @@ app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
-
-// implement function that users can only see their own URLs
-let urlsForUser = function(userID) {
-  let filteredURLs = {};
-  for (const shortURL of Object.keys(urlDatabase)) {
-    if (urlDatabase[shortURL].userID === userID) {
-      filteredURLs[shortURL] = urlDatabase[shortURL];
-    }
-  }
-  return filteredURLs;
-};
 
 // add POST delete route re-direct
 app.post("/urls/:shortURL/delete", (req, res) => {
