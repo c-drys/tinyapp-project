@@ -10,7 +10,7 @@ app.use(cookieSession({
   keys: [/* secret keys */
   'asdfghjkl']
 }))
-app.use(cookieParser());
+// app.use(cookieParser());
 app.set("view engine", "ejs");
 
 // convert the request body from a buffer to a readable string
@@ -96,7 +96,7 @@ const registeredUser = function(email) {
 };
 
 // scan object for user ID
-const findID = function(users, email) {
+const getUserByEmail = function(users, email) {
   for (const newUserID in users) {
     // console.log(users[newUserID].email);
     // console.log(email);
@@ -105,6 +105,14 @@ const findID = function(users, email) {
     }
   }
   return false;
+};
+
+const getUserByEmail = function(email, database) {
+  for (const user in database) {
+    if (database[user].email === email) {
+      return user;
+    }
+  }
 };
 
 // add GET index_new template route
