@@ -22,14 +22,14 @@ const users = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    Password: "password101"
-    //Password: bcrypt.hashSync("password101", 10)
-  },
+    //Password: "password101"
+    password: bcrypt.hashSync("password101", 10)
+  },  
   user2RandomID: {
     id: "user2RandomID",
     email: "user2@example.com",
-    Password: "password202"
-    //Password: bcrypt.hashSync("password202", 10)
+    //Password: "password202"
+    password: bcrypt.hashSync("password202", 10)
     }
 };
 
@@ -188,23 +188,31 @@ console.log('iii', currentUser)
 // add POST username for username cookie
 app.post("/login", (req, res) => {
   const user = findID(users, req.body.email);
-  if  (req.body.email === "" || req.body.password === "") {
-    res.sendStatus(400);
-  } else if (!user) {
-    res.sendStatus(403);
-  } else {
-    console.log("users ID'd", user);
+if (req.body.email !== user.email) {
+  return res.sendStatus(403)
+}
+if (!bcrypt.compareSync(req.body.password, user.password)) {
+  return res.sendStatus(403)
+}
+
+
+  // // if  (req.body.email === "" || req.body.password === "") {
+  // //   res.sendStatus(400);
+  // } else if (!user) {
+  //   res.sendStatus(403);
+  // } else {
+  //   console.log("users ID'd", user);
     res.cookie("user_id", user.id);
-    // console.log("username", req.body.username)
+  //   // console.log("username", req.body.username)
     res.redirect(`/urls`);
-  }
+  // // }
 });
 
 // add POST register for new user
 app.post("/register", (req, res) => {
   let newUserID = generateRandomString();
   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-  console.log(hashedPassword);
+  console.log("imhashed", hashedPassword);
   if (req.body.email === "" || req.body.password === "") {
     res.sendStatus(400);
   } else {
@@ -213,10 +221,11 @@ app.post("/register", (req, res) => {
       email: req.body.email,
       Password: hashedPassword
     };
+    console.log(bcrypt.compareSync('asdf', hashedPassword))
     }
-  console.log(users);
+  // console.log(users);
   res.cookie("user_id", newUserID);
-  console.log(newUserID);
+  // console.log(newUserID);
   // inspect data object contents
   res.redirect(`/urls`);
 });
