@@ -1,19 +1,16 @@
 const cookieSession = require('cookie-session')
 const express = require("express");
 const app = express();
-//const cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
 const bcrypt = require('bcrypt');
 const PORT = 5000; // default port 8080
-
-const { generateRandomString, getUserByEmail, urlsForUser } = require('./helpers.js');
-
 
 app.use(cookieSession({
   name: 'session',
   keys: [/* secret keys */
   'asdfghjkl']
 }))
-// app.use(cookieParser());
+app.use(cookieParser());
 app.set("view engine", "ejs");
 
 // convert the request body from a buffer to a readable string
@@ -23,8 +20,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const urlDatabase = {
 
   'b2xVn2': { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
-  '9sm5xK': { longURL: "http://www.google.ca", userID: "userRandomID" },
-  'akjbjb': { longURL: "http://shop.lululemon.com", userID: "user2RandomID" }
+  '9sm5xK': { longURL: "http://www.google.ca", userID: "user2RandomID" },
+  'akjbjb': { longURL: "http://shop.lululemon.com", userID: "userRandomID" },
+  'aq684i': { longURL: "http://bbc.co.uk/iplayer", userID: "user2RandomID" },
+  'yimgsv': { longURL: "http://vancouver.ca", userID: "user2RandomID" },
+  'f20flh': { longURL: "http://www.instagram.com", userID: "userRandomID" },
+  'kkzlwh': { longURL: "http://www.urbandictionary.com", userID: "user2RandomID" },
+  'tagwgw': { longURL: "http://www.gq.com", userID: "user2RandomID" }
 };
 
 const users = {
@@ -40,6 +42,18 @@ const users = {
     //Password: "password202"
     password: bcrypt.hashSync("password202", 10)
     }
+};
+
+// // implement to always return 6 characters
+const generateRandomString = function() {
+  let str = "";
+  let alphanum = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let alphanumlength = alphanum.length;
+  for (let i = 0; i < 6; i++) {
+    str += alphanum.charAt(Math.floor(Math.random() * alphanumlength));
+  }
+  console.log("string", str);
+  return str;
 };
 
 // add GET index_ejs template route
@@ -86,21 +100,37 @@ const registeredUser = function(email) {
   }
 };
 
+// scan object for user ID
+const findID = function(users, email) {
+  for (const newUserID in users) {
+    // console.log(users[newUserID].email);
+    // console.log(email);
+    if (users[newUserID].email === email) {
+      return users[newUserID];
+    }
+  }
+  return false;
+};
+
 // add GET index_new template route
 app.get("/urls/new", (req, res) => {
-  const user = users[req.cookies.user_id]
-  if (user) {
-    let templateVars = { user };
-    res.render("urls_new", templateVars);
+  const user = users[req.session.user_id]
+  if (!user) {
+    return res.redirect(`/login`);
   }
+    let templateVars = { 
+      user: users[req.session["user_id"]] 
+    };
+    res.render("urls_new", templateVars);
+  })
 
   // // res.render("urls_new", templateVars);
 
   // if (req.session.user_id) {
- else {
-    res.redirect(`/login`);
-  }
-});
+//  else {
+//     res.redirect(`/login`);
+//   }
+// });
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
@@ -132,6 +162,17 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+// implement function that users can only see their own URLs
+let urlsForUser = function(userID) {
+  let filteredURLs = {};
+  for (const shortURL of Object.keys(urlDatabase)) {
+    if (urlDatabase[shortURL].userID === userID) {
+      filteredURLs[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return filteredURLs;
+};
+
 // add POST delete route re-direct
 app.post("/urls/:shortURL/delete", (req, res) => {
   const currentUser = req.session.user_id;
@@ -161,7 +202,7 @@ console.log('iii', currentUser)
 
 // add POST username for username cookie
 app.post("/login", (req, res) => {
-  const user = getUserByEmail(users, req.body.email);
+  const user = findID(users, req.body.email);
 if (req.body.email !== user.email) {
   return res.sendStatus(403)
 }
