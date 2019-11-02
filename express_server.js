@@ -1,7 +1,7 @@
 const cookieSession = require('cookie-session')
 const express = require("express");
 const app = express();
-const cookieParser = require("cookie-parser");
+//const cookieParser = require("cookie-parser");
 const bcrypt = require('bcrypt');
 const PORT = 5000; // default port 8080
 
@@ -10,7 +10,7 @@ app.use(cookieSession({
   keys: [/* secret keys */
   'asdfghjkl']
 }))
-app.use(cookieParser());
+//app.use(cookieParser());
 app.set("view engine", "ejs");
 
 // convert the request body from a buffer to a readable string
@@ -91,7 +91,7 @@ app.get("/login", (req, res) => {
   res.render(`login`, templateVars);
 });
 
-//verify user on registry, redirect if unverified
+// verify user on registry, redirect if unverified
 const registeredUser = function(email) {
   for (let user of Object.keys(users)) {
     if (email === users[user]["email"]) {
@@ -101,12 +101,21 @@ const registeredUser = function(email) {
 };
 
 // scan object for user ID
-const findID = function(users, email) {
-  for (const newUserID in users) {
-    // console.log(users[newUserID].email);
-    // console.log(email);
-    if (users[newUserID].email === email) {
-      return users[newUserID];
+// const getUserByEmail = function(users, email) {
+//   for (const newUserID in users) {
+//     // console.log(users[newUserID].email);
+//     // console.log(email);
+//     if (users[newUserID].email === email) {
+//       return users[newUserID];
+//     }
+//   }
+//   return false;
+// };
+
+const getUserByEmail = function(email, database) {
+  for (const user in database) {
+    if (database[user].email === email) {
+      return user;
     }
   }
   return false;
@@ -202,7 +211,7 @@ console.log('iii', currentUser)
 
 // add POST username for username cookie
 app.post("/login", (req, res) => {
-  const user = findID(users, req.body.email);
+  const user = getUserByEmail(users, req.body.email);
 if (req.body.email !== user.email) {
   return res.sendStatus(403)
 }
