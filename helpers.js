@@ -1,4 +1,4 @@
-// // implement to always return 6 characters
+// // implement a function to retrun 6 characters to represent a short URL
 const generateRandomString = function() {
   let str = "";
   let alphanum = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -10,6 +10,7 @@ const generateRandomString = function() {
   return str;
 };
 
+// scan the email database for registered users
 const getUserByEmail = function(email, database) {
   for (const user in database) {
     if (database[user].email === email) {
@@ -19,7 +20,7 @@ const getUserByEmail = function(email, database) {
   return false;
 };
 
-// implement function that users can only see their own URLs
+// display short URLS to the user who has created them 
 let urlsForUser = function(userID, urlDatabase) {
   let filteredURLs = {};
   for (const shortURL of Object.keys(urlDatabase)) {
