@@ -11,11 +11,19 @@ TinyApp is a full stack web application built with Node and Express that allows 
 ## Dependencies
 
 - Node.js
-- Express
-- EJS
-- bcrypt
-- body-parser
-- cookie-session
+- Express ^4.17.1
+- EJS ^2.7.1
+- bcrypt 2.0.0
+- body-parser 1.19.0
+- cookie-session ^1.3.3
+
+## Dev Dependencies
+
+- chai ^4.2.0
+- eslint ^6.6.0
+- mocha ^6.2.2
+- nodemon ^1.19.4
+
 
 ## Getting Started
 
