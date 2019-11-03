@@ -42,6 +42,10 @@ const urlDatabase = {
 
 //get routes
 
+app.get("/", (req, res) => {
+  res.redirect(`/urls/`);
+});
+
 // add GET access to json
 app.get("/urls.json", (req, res) => {
   let templateVars = {
@@ -59,7 +63,9 @@ app.get("/register", (req, res) => {
 
 // add GET for urls_login
 app.get("/login", (req, res) => {
-  let templateVars = {
+  if (users[req.session.user_id]) {
+    return res.redirect(`/urls`);
+   } let templateVars = {
     currentUser: users[req.session.user_id]
   };
   res.render(`login`, templateVars);
@@ -89,6 +95,7 @@ app.get("/urls/new", (req, res) => {
     res.render("urls_new", templateVars);
   })
 
+// add GET to redirect short URL to longURL
 app.get("/urls/:shortURL", (req, res) => {
     const currentUser = req.session.user_id;
     if (!currentUser) {
@@ -103,6 +110,7 @@ app.get("/urls/:shortURL", (req, res) => {
   };
   });
 
+// add GET to short URL access
   app.get("/u/:shortURL", (req, res) => {
     const longURL = urlDatabase[req.params.shortURL].longURL;
     res.redirect(longURL);
@@ -138,6 +146,7 @@ if (req.body.email !== user.email) {
   res.redirect(`/urls`);
 });
 
+// add POST create URL and add to database 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   const user = req.session.user_id
