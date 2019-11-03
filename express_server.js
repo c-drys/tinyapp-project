@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const bodyParser = require("body-parser");
 const PORT = 5000; // default port 8080
 const { generateRandomString, getUserByEmail, urlsForUser } = require('./helpers.js');
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(cookieSession({
@@ -17,13 +18,11 @@ const users = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    //Password: "password101"
     password: bcrypt.hashSync("password101", 10)
   },  
   user2RandomID: {
     id: "user2RandomID",
     email: "user2@example.com",
-    //Password: "password202"
     password: bcrypt.hashSync("password202", 10)
     }
 };
@@ -46,7 +45,7 @@ const urlDatabase = {
 // add GET access to json
 app.get("/urls.json", (req, res) => {
   let templateVars = {
-    user: users[req.session.user_id]
+    currentUser: users[req.session.user_id]
   };
   res.json(urlDatabase, templateVars);
 });
@@ -54,14 +53,14 @@ app.get("/urls.json", (req, res) => {
 // add GET register_ejs template route
 app.get("/register", (req, res) => {
   let templateVars = {
-    user: users[req.session.user_id]};
+    currentUser: users[req.session.user_id]};
   res.render(`urls_register`, templateVars);
 });
 
 // add GET for urls_login
 app.get("/login", (req, res) => {
   let templateVars = {
-    user: users[req.session.user_id]
+    currentUser: users[req.session.user_id]
   };
   res.render(`login`, templateVars);
 });
@@ -115,7 +114,6 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/register", (req, res) => {
   let newUserID = generateRandomString();
   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-  console.log("imhashed", hashedPassword);
   if (req.body.email === "" || req.body.password === "") {
     res.sendStatus(400);
   } else {
@@ -124,7 +122,6 @@ app.post("/register", (req, res) => {
       email: req.body.email,
       Password: hashedPassword
     };
-    console.log(bcrypt.compareSync('asdf', hashedPassword))
     }
   req.session.user_id = newUserID;
   res.redirect(`/urls`);
