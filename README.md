@@ -1,5 +1,5 @@
-                                                                                                      # tinyapp-project
-                                                                                            LHL: W3: tinyApp Assignment
+                                                                                               # tinyapp-project
+                                                                                     LHL: W3: tinyApp Assignment
 
 TinyApp is a full stack web application built with Node and Express that allows users to shorten long URLs (à la bit.ly).
 
