@@ -1,5 +1,5 @@
-                                                                                                              # tinyapp-project
-                                                                                                    LHL: W3: tinyApp Assignment
+                                                                                                      # tinyapp-project
+                                                                                            LHL: W3: tinyApp Assignment
 
 TinyApp is a full stack web application built with Node and Express that allows users to shorten long URLs (à la bit.ly).
 
@@ -31,3 +31,14 @@ TinyApp is a full stack web application built with Node and Express that allows 
 - Install all dependencies (using the `npm install` command).
 - Run the development web server using the `node express_server.js` command.
 - Available on localhost: 5000
+
+## Using the App
+
+- Registration required to access app features
+- Login is required 
+- User can click 'create new URL' in header
+- User can submit as many new URLs as desired, each will be stored in their personal log accessed via "My URLs" in header
+- User's can edit/ delete their own URLs 
+- User's can share their short URLs with others to utilise
+- Log out via the button in the header
+- User's URLs will be stored in the database for future reference 
