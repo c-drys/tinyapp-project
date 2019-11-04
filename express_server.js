@@ -63,9 +63,11 @@ app.get("/register", (req, res) => {
 
 // add GET for urls_login
 app.get("/login", (req, res) => {
-  let templateVars = {
-    user: users[req.session.user_id]
+   if (users[req.session.user_id]) {
+    return res.redirect(`urls`);
   };
+  let templateVars = {
+    user: users[req.session.user_id]};
   res.render(`login`, templateVars);
 });
 
@@ -142,9 +144,11 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
   const user = getUserByEmail(req.body.email, users);
 if (req.body.email !== user.email) {
-  return res.sendStatus(403)
-} if (!bcrypt.compareSync(req.body.password, user.password)) {
-  return res.sendStatus(403)
+  return res.status(403).send('Sorry Invalid Credentials');
+
+}  if (!bcrypt.compareSync(req.body.password, user.password)) {
+  return res.status(403).send('Hmmmmmm... do you need a Password Reminder?');
+
 } req.session.user_id = user.id 
   res.redirect(`/urls`);
 });
