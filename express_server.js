@@ -68,14 +68,14 @@ app.get("/login", (req, res) => {
   };
   let templateVars = {
     user: users[req.session.user_id]};
-  res.render(`login`, templateVars);
+  res.render(`urls_login`, templateVars);
 });
 
 // add GET index_ejs template route
 app.get('/urls', (req, res) => {
   const currentUser = req.session.user_id;
   if (!currentUser) {
-    res.redirect(`/login`);
+    res.redirect(`/urls_login`);
   }
   const filteredURLs = urlsForUser(currentUser, urlDatabase);
   let templateVars = { urls: filteredURLs, user: users[currentUser] };
@@ -87,7 +87,7 @@ app.get('/urls', (req, res) => {
 app.get("/urls/new", (req, res) => {
   const currentUser = users[req.session.user_id];
   if (!currentUser) {
-    return res.redirect(`/login`);
+    return res.redirect(`/urls_login`);
   }
     let templateVars = { 
       user: users[req.session.user_id]
@@ -190,7 +190,7 @@ app.post("/urls/:shortURL", (req, res) => {
 // add POST logout & clear user cookie
 app.post("/logout", (req, res) => {
   req.session = null 
-  res.redirect(`/login`);
+  res.redirect(`/urls_login`);
 });
 
 app.listen(PORT, () => {
