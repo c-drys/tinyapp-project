@@ -49,7 +49,7 @@ app.get("/", (req, res) => {
 // add GET access to json
 app.get("/urls.json", (req, res) => {
   let templateVars = {
-    currentUser: users[req.session.user_id]
+    user: users[req.session.user_id]
   };
   res.json(urlDatabase, templateVars);
 });
@@ -57,19 +57,19 @@ app.get("/urls.json", (req, res) => {
 // add GET register_ejs template route
 app.get("/register", (req, res) => {
   let templateVars = {
-    currentUser: users[req.session.user_id]};
+    user: users[req.session.user_id]};
   res.render(`urls_register`, templateVars);
 });
 
 // add GET for urls_login
 app.get("/login", (req, res) => {
-  if (users[req.session.user_id]) {
-    return res.redirect(`/urls`);
-   } let templateVars = {
-    currentUser: users[req.session.user_id]
+  let templateVars = {
+    user: users[req.session.user_id]
   };
   res.render(`login`, templateVars);
 });
+
+
 
 // add GET index_ejs template route
 app.get('/urls', (req, res) => {
@@ -172,7 +172,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 // add POST edit route re-direct
 app.post("/urls/:shortURL", (req, res) => {
   const currentUser = req.session.user_id;
-console.log('iii', currentUser)
   if (!currentUser) {
     return res.status(403).send("NO ACCESS Forbidden from Editing this URL");
   } else {
