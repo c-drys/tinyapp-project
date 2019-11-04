@@ -14,14 +14,14 @@
           <button type="submit" class="btn btn-outline-dark">Register</button>
         </form>
       </div>
-      <% } else {%>
-        <div>
+        <div> 
+          <% } else {%>
           <form method="POST" action="/logout">
-            Logged in as: <%= user.email %>!
+            Logged in as: <%= user.email %>
             <button type="submit" class="btn btn-outline-dark">Logout</button>
           </form>
-        </div>
         <% } %>
+      </div>
         <button
           class="navbar-toggler"
           type="button"
