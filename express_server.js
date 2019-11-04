@@ -64,18 +64,18 @@ app.get("/register", (req, res) => {
 // add GET for urls_login
 app.get("/login", (req, res) => {
    if (users[req.session.user_id]) {
-    return res.redirect(`urls`);
+    return res.redirect(`/urls`);
   };
   let templateVars = {
     user: users[req.session.user_id]};
-  res.render(`urls_login`, templateVars);
+  res.render(`login`, templateVars);
 });
 
 // add GET index_ejs template route
 app.get('/urls', (req, res) => {
   const currentUser = req.session.user_id;
   if (!currentUser) {
-    res.redirect(`/urls_login`);
+    res.redirect(`/login`);
   }
   const filteredURLs = urlsForUser(currentUser, urlDatabase);
   let templateVars = { urls: filteredURLs, user: users[currentUser] };
@@ -87,7 +87,7 @@ app.get('/urls', (req, res) => {
 app.get("/urls/new", (req, res) => {
   const currentUser = users[req.session.user_id];
   if (!currentUser) {
-    return res.redirect(`/urls_login`);
+    return res.redirect(`/login`);
   }
     let templateVars = { 
       user: users[req.session.user_id]
@@ -169,7 +169,7 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   const currentUser = req.session.user_id;
     if (!currentUser) {
-      res.redirect(`/access`);
+      return res.status(403).send('That is maybe a step too far .. Access Denied');
     } else {
     delete urlDatabase[req.params.shortURL];
       return res.redirect("/urls");
@@ -190,7 +190,7 @@ app.post("/urls/:shortURL", (req, res) => {
 // add POST logout & clear user cookie
 app.post("/logout", (req, res) => {
   req.session = null 
-  res.redirect(`/urls_login`);
+  res.redirect(`/login`);
 });
 
 app.listen(PORT, () => {
