@@ -69,8 +69,6 @@ app.get("/login", (req, res) => {
   res.render(`login`, templateVars);
 });
 
-
-
 // add GET index_ejs template route
 app.get('/urls', (req, res) => {
   const currentUser = req.session.user_id;
@@ -122,9 +120,14 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/register", (req, res) => {
   let newUserID = generateRandomString();
   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-  if (req.body.email === "" || req.body.password === "") {
-    res.sendStatus(400);
-  } else {
+  if (req.body.email === '' || req.body.password === '') {
+    return res.status(400).send('Invisibility is cool .. Not here tho');
+  }
+  for (const userId in users) {
+    if (users[userId].email === req.body.email) {
+      return res.status(400).send('I think I already know you..');
+  }
+  else 
     users[newUserID] = {
       id: newUserID,
       email: req.body.email,
